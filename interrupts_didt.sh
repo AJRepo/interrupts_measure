@@ -38,20 +38,28 @@ function plot_data() {
   this_irq=""; 
   PLOTFILE="./plotfile.dat"
   rm $PLOTFILE
+  num_irqs=0
   # Gnuplot syntax supports a single data file with contain multiple sets of data, separated by two
   # blank lines.  Each data set is assigned as index value that can be retrieved via the ‘using‘ 
   # specifier ‘column(-2)‘.
+  printf "IRQ0\n" >> $PLOTFILE
   printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description" >> $PLOTFILE
-  sort -n "$RAWFILE" | while read -r -a line; do
+  while read -r -a line; do
     if [[ $this_irq != "${line[0]}" ]] && [[ $this_irq != "" ]]; then
       printf "\n\n" >> $PLOTFILE
+      printf "\"IRQ%s\"\n" "${line[0]}" >> $PLOTFILE
       printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description" >> $PLOTFILE
+      ((num_irqs++))
     fi
     echo "${line[*]}" >> $PLOTFILE
     this_irq=${line[0]}
-  done
+  done<<EOF
+  $(sort -n "$RAWFILE")
+EOF
 
-  gnuplot -p -e "plot '$PLOTFILE' using 3:5:(column(-2)) with linespoints lc variable title columnhead"
+  echo "NUM_IRQS=$num_irqs"
+
+  gnuplot -p -e "plot for [i=0:$num_irqs] '$PLOTFILE' using 3:5:(column(-2)) index i with linespoints lc variable title columnhead"
 }
 
 RAWFILE="./rawfile.dat"
