@@ -63,7 +63,7 @@ EOF
 }
 
 RAWFILE="./rawfile.dat"
-RECORD_DATA=FALSE
+RECORD_DATA=TRUE
 if [[ $RECORD_DATA == TRUE ]]; then
   rm $RAWFILE
   record_data
