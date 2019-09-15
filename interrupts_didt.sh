@@ -41,7 +41,7 @@ function plot_data() {
   # Gnuplot syntax supports a single data file with contain multiple sets of data, separated by two
   # blank lines.  Each data set is assigned as index value that can be retrieved via the ‘using‘ 
   # specifier ‘column(-2)‘.
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description"
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description" >> $PLOTFILE
   sort -n "$RAWFILE" | while read -r -a line; do
     if [[ $this_irq != "${line[0]}" ]] && [[ $this_irq != "" ]]; then
       printf "\n\n" >> $PLOTFILE
@@ -51,11 +51,11 @@ function plot_data() {
     this_irq=${line[0]}
   done
 
-  gnuplot -p -e "plot '$PLOTFILE' using 3:5:(column(-2)) with linespoints title columnhead"
+  gnuplot -p -e "plot '$PLOTFILE' using 3:5:(column(-2)) with linespoints lc variable title columnhead"
 }
 
 RAWFILE="./rawfile.dat"
-RECORD_DATA=TRUE
+RECORD_DATA=FALSE
 if [[ $RECORD_DATA == TRUE ]]; then
   rm $RAWFILE
   record_data
