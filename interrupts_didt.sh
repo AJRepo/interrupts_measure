@@ -64,7 +64,7 @@ EOF
 
   echo "NUM_IRQS=$num_irqs"
 
-  gnuplot -p -e "plot for [i=0:$num_irqs] '$PLOTFILE' using 3:5:(column(-2)) index i with linespoints lc variable title columnhead"
+  gnuplot -p -e "set xlabel '# Seconds'; set ylabel '# Interrupts' ; plot for [i=0:$num_irqs] '$PLOTFILE' using 3:5:(column(-2)) index i with linespoints lc variable title columnhead"
 }
 
 RAWFILE="./rawfile.dat"
