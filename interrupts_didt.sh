@@ -8,7 +8,7 @@
 function record_data() {
   TOTAL_TIME=0
   IFS=$'\t'
-  for i in {0..5}; do
+  for i in {0..20}; do
     #echo "I=$i"
     NOW=$(date +%s)
     while read -r -a line; do
@@ -69,6 +69,7 @@ EOF
 
 RAWFILE="./rawfile.dat"
 RECORD_DATA=TRUE
+echo "Starting Measuring Interrupts"
 if [[ $RECORD_DATA == TRUE ]]; then
   rm $RAWFILE
   record_data
