@@ -1,12 +1,14 @@
 #!/bin/bash
 
-printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description"
 USING_GNUPLOT=TRUE
 TOTAL_TIME=0
 IFS=$'\t'
 for i in {0..10}; do 
   #echo "I=$i"
   NOW=$(date +%s)
+  if [[ $USING_GNUPLOT == TRUE ]] && [[ $i -gt 0 ]]; then
+    printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description"
+  fi
   while read -r -a line; do
     if [ $i -gt 0 ]; then 
         this_time=$NOW
@@ -25,12 +27,11 @@ for i in {0..10}; do
 EOT
   last_time=$(date +%s)
   TOTAL_TIME=$((TOTAL_TIME + delta_t))
-  if [[ $USING_GNUPLOT == TRUE ]]; then
+  if [[ $USING_GNUPLOT == TRUE ]] && [[ $i -gt 0 ]]; then
     # Gnuplot syntax supports a single data file with contain multiple sets of data, separated by two
     # blank lines.  Each data set is assigned as index value that can be retrieved via the ‘using‘ 
     # specifier ‘column(-2)‘.
     printf "\n\n"
-    printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description"
   fi
   sleep 2
 done
