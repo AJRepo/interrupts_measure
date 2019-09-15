@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#options: 
+#options:
 # 1. Record data only, ovwerwriting $RAWFILE
 # 2. Plot old data only from $RAWFILE and overwriting $PLOTFILE
 # 3. Record and plot data (overwriting both)
@@ -9,18 +9,18 @@
 function record_data() {
   TOTAL_TIME=0
   IFS=$'\t'
-  for i in {0..10}; do 
+  for i in {0..20}; do
     #echo "I=$i"
     NOW=$(date +%s)
     while read -r -a line; do
-      if [ $i -gt 0 ]; then 
+      if [ $i -gt 0 ]; then
           this_time=$NOW
           this_irq=${line[1]%':'}
           this_interrupts[${this_irq}]=${line[2]}
           delta_t=$((this_time - last_time))
           delta_i=$((this_interrupts[${this_irq}] - last_interrupts[${this_irq}]))
           di_per_dt=$(echo "scale=2;$delta_i/$delta_t" | bc)
-          printf "%s\t%s\t%s\t%s\t%s\t%s\t\"%s %s %s\"\n" "$this_irq" "$NOW" "$TOTAL_TIME" "${this_interrupts[${this_irq}]}" "$delta_i" "$di_per_dt" "${line[3]}" "${line[4]}" "${line[5]}" >> $RAWFILE
+          printf "%s\t%s\t%s\t%s\t%s\t%s\t\"%s %s %s\"\n" "$this_irq" "$NOW" "$TOTAL_TIME" "${this_interrupts[${this_irq}]}" "$delta_i" "$di_per_dt" "${line[3]}" "${line[4]}" "${line[5]}" >> "$RAWFILE"
       else
         this_irq=${line[1]%':'}
         last_interrupts[${this_irq}]=${line[2]}
@@ -35,20 +35,20 @@ EOT
 }
 
 function plot_data() {
-  this_irq=""; 
+  this_irq="";
   PLOTFILE="./plotfile.dat"
   rm $PLOTFILE
   num_irqs=0
   # Gnuplot syntax supports a single data file with contain multiple sets of data, separated by two
-  # blank lines.  Each data set is assigned as index value that can be retrieved via the ‘using‘ 
+  # blank lines.  Each data set is assigned as index value that can be retrieved via the ‘using‘
   # specifier ‘column(-2)‘.
-  printf "IRQ0\n" >> $PLOTFILE
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description" >> $PLOTFILE
+  printf "\"IRQ0\n\"" >> $PLOTFILE
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "di/dt" "description" >> $PLOTFILE
   while read -r -a line; do
-    if [[ $this_irq != "${line[0]}" ]] && [[ $this_irq != "" ]]; then
+    if [[ $this_irq != "${line[0]}" ]] && [[ $num_irqs != 0 ]]; then
       printf "\n\n" >> $PLOTFILE
       printf "\"IRQ%s\"\n" "${line[0]}" >> $PLOTFILE
-      printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "delta_t" "description" >> $PLOTFILE
+      printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "irq" "timestamp" "time" "interrupts" "delta_i" "di/dt" "description" >> $PLOTFILE
       ((num_irqs++))
     fi
     echo "${line[*]}" >> $PLOTFILE
