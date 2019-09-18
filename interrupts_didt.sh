@@ -4,7 +4,8 @@
 # 1. Record data only, ovwerwriting $RAWFILE
 # 2. Plot old data only from $RAWFILE and overwriting $PLOTFILE
 # 3. Record and plot data (overwriting both)
-
+#
+# Source: https://github.com/AJRepo/interrupts_measure
 function record_data() {
   TOTAL_TIME=0
   IFS=$'\t'
@@ -12,7 +13,7 @@ function record_data() {
     #echo "I=$i"
     NOW=$(date +%s)
     while read -r -a line; do
-      #don't record the first on, start from i=1 so we get a non-infinity di/dt
+      #don't record the first one, start from i=1 so we get a non-infinity di/dt
       if [ $i -gt 0 ]; then
           this_time=$NOW
           this_irq=${line[1]%':'}
