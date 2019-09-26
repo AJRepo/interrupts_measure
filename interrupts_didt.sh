@@ -6,6 +6,40 @@
 # 3. Record and plot data (overwriting both)
 #
 # Source: https://github.com/AJRepo/interrupts_measure
+PROGRAM_NAME=$(basename "$0")
+USAGE_TEXT="$PROGRAM_NAME Version: $VERSION
+
+Usage: $PROGRAM_NAME [-h] [-g] [-d]
+
+-h    Print this message
+-g    Graph Only: Don't record more data, just display what's in rawfile.dat
+-d    Data Only: Don't display graph
+"
+
+RECORD_DATA=TRUE
+PLOT_DATA=TRUE
+while getopts 'gdh' OPTION
+do
+  case $OPTION in
+  d) 
+    RECORD_DATA=TRUE
+    PLOT_DATA=FALSE
+    ;;
+  h) 
+    echo "$USAGE_TEXT"
+    exit 0
+    ;;
+  g) 
+    RECORD_DATA=FALSE
+    PLOT_DATA=TRUE
+    ;;
+  *) 
+    print "$USAGE_TEXT"
+    exit 2;
+    ;;
+  esac
+done
+
 function record_data() {
   TOTAL_TIME=0
   IFS=$'\t'
@@ -69,14 +103,14 @@ EOF
 }
 
 RAWFILE="./rawfile.dat"
-RECORD_DATA=TRUE
+#RECORD_DATA=TRUE
 echo "Starting Measuring Interrupts"
 if [[ $RECORD_DATA == TRUE ]]; then
   rm $RAWFILE
   record_data
 fi
 
-PLOT_DATA=TRUE
+#PLOT_DATA=TRUE
 if [[ $PLOT_DATA == TRUE ]] && [[ -n $RAWFILE ]]; then
   plot_data
 fi
