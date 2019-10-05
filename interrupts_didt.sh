@@ -12,15 +12,26 @@ USAGE_TEXT="$PROGRAM_NAME Version: $VERSION
 Usage: $PROGRAM_NAME [-h] [-g] [-d]
 
 -h    Print this message
+-b    Both: Record Data (create rawfile.dat) and Graph (create plotfile.dat)
 -g    Graph Only: Don't record more data, just display what's in rawfile.dat
 -d    Data Only: Don't display graph
 "
 
 RECORD_DATA=TRUE
 PLOT_DATA=TRUE
+
+if [[ $1 == "" ]]; then
+  echo "$USAGE_TEXT"
+  exit 1;
+fi
+
 while getopts 'gdh' OPTION
 do
   case $OPTION in
+  b) 
+    RECORD_DATA=TRUE
+    PLOT_DATA=TRUE
+    ;;
   d) 
     RECORD_DATA=TRUE
     PLOT_DATA=FALSE
