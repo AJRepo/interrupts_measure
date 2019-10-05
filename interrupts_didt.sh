@@ -25,7 +25,7 @@ if [[ $1 == "" ]]; then
   exit 1;
 fi
 
-while getopts 'gdh' OPTION
+while getopts 'bgdh' OPTION
 do
   case $OPTION in
   b) 
@@ -115,7 +115,7 @@ EOF
 
 RAWFILE="./rawfile.dat"
 #RECORD_DATA=TRUE
-echo "Starting Measuring Interrupts"
+echo "Starting Measuring Interrupts: Creating $RAWFILE"
 if [[ $RECORD_DATA == TRUE ]]; then
   rm $RAWFILE
   record_data
